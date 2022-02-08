@@ -1,136 +1,174 @@
-#include<stdio.h>
-#include<ctype.h>
+#include <stdio.h>
+#define INT_SIZE sizeof(int) * 8 // this gives integer size in bits 
 
-void SizeOfVariables(void);
-int IsLeapYear(int);
-int IsVowel(char);
-void ReverseNumber(long);
+// function declarations 
+long Factorial(long num);
+int isPalindrome(long value);
+int HighestBitSet(int value); 
+void ReverseIt(void);
+void ReverseItAgain(void);
+void Pyramid(int lines); 
+int binaryConvert(); 
 
-// Task A - function retrieves the size of declared variables 
-void SizeOfVariables(void){
-    // declared a series of variables with different types 
-    char c;
-    short s;
-    int i; 
-    unsigned int ui;
-    unsigned long int ul;
-    float f; 
-    double d;
-    long double ld;
-    void *ptr;
+// Task A - calculate the factorial of the given value and return the value 
+long Factorial(long num){
+    long fact=1;
     
-    // prints out the size in bytes of each variable along with name of the variable 
-    // sizeof command returns the size of variables in bytes 
-    printf("\n\nThe size of char: %zu bytes\n ",sizeof(c));
-    printf("\n\nThe size of short: %zu bytes\n ", sizeof(s));
-    printf("\n\nThe size of int is: %zu bytes\n",sizeof(i));
-    printf("\n\nThe size of unsigned int: %zu bytes\n",sizeof(ui));
-    printf("\n\nThe size of unsigned long int: %zu bytes \n",sizeof(ul));
-    printf("\n\nThe size of float: %zu bytes\n",sizeof(f));
-    printf("\n\nThe size of double:  %zu bytes\n", sizeof(d));
-    printf("\n\nThe size of long double:  %zu bytes\n",sizeof(ld));
-    printf("\n\nThe size of *ptr:  %zu bytes\n",sizeof(ptr));
-    
+    // if/else statement checks whether you can find the factorial or not 
+    // can't find the factorial of anything less than or equal to zero 
+    if(num <=0){
+        return 0; 
+    }
+    // if num > 0, you can find its factorial 
+    else{
+        for(int a = 1; a <=num; a++){
+            fact *= a; 
+        }
+        return fact; 
+    }
 }
-
-
-// Task B -- checks to see if a given year is a leap year or not 
-int IsLeapYear(int aYear){
-    
-    // if and else-if statements check to see if leap year conditions are met 
-    if(aYear % 4 == 0 || aYear % 400 == 0 && aYear > 1752){
-        printf(" \n is a LEAP YEAR! \n",aYear);
-    }else if(aYear % 100 == 0){
-        printf(" \n is  NOT a LEAP YEAR! \n",aYear);
-    }else{
-        printf(" \n is  NOT a LEAP YEAR! \n",aYear);
-    }
-    return 0;
-
-}   
-
-// Task C -- checks to see if a given character is a vowel or consonant; returns an "error" message if entered character is not in ASCII alphabet 
-int IsVowel(char aLetter){
-    int vowelIn;
-    // defined vowelIn as the conditions needed for a vowel -- applies to both lowercase and uppercase vowels 
-    vowelIn = (aLetter == 'a' || aLetter == 'A' || aLetter == 'e' || aLetter == 'E' || aLetter == 'i' || aLetter == 'I' || aLetter =='o' || aLetter =='O' || aLetter == 'u' || aLetter == 'U');
-    
-    // isalpha function is used to check whether a character is part of the alphabet or not -- a premade C function in the <ctype.h> library 
-    // error message occurs when user enters a non-ASCII character 
-    if(!isalpha(aLetter)){
-        printf("Error! You entered a non-alphabetic character.");
-    }
-    else if(vowelIn){
-        printf("\n %c is a vowel. \n", aLetter);
-    // if user input is not a vowel or a non-alphabetic character, it's a consonant 
-    }else{
-        printf("\n %c is a consonant. \n ", aLetter);
-    }
-    return 0;
-}
-
-// Task D - takes in a number and outputs the reverse (for both positive and negative) 
-void ReverseNumber(long aNumber){
-    long reverseNum, sumNum = 0; 
-    
+// Task B - determine if the given value’s digits are a palindrome (a palindrome is word, number, phrase, or other sequence of characters which reads the same backward as forward) 
+int isPalindrome(long value){
+    long temp, reverseNum, sumNum = 0;  
+    temp = value;
     // used a while loop to iterate through each element of the long entry -- will iterate as long as aNumber doesn't equal 0 
-    while(aNumber!=0){
+    while(value!=0){
         // first a modulus 10 operation is performed 
-        sumNum = aNumber % 10;
+        sumNum = value % 10;
         // then reverseNum is multiplied by 10 and added to whatever outputs from previous line 
         reverseNum = reverseNum * 10 + sumNum; 
-        // then aNumber is divded by 10 to finally reverse the number 
-        aNumber = aNumber/10;
+        // then value is divded by 10 to finally reverse the number 
+        value = value/10;
     }
-    // prints the output of the while loop, which is the reversed number 
-    printf("\nThe reverse of the inputted number is %ld \n", reverseNum);
+    if(reverseNum == temp){
+        printf(" is a PALINDROME!");
+    }
+    else{
+        printf(" is NOT a palindrome!");
+    }
 }
 
-int main(){
-    SizeOfVariables();
-    int aYear;
-    printf("\n\n Enter The Year: ");
-    scanf("%d",&aYear);
-    IsLeapYear(aYear);
-   
-    long aNumber; 
-    printf("\nPlease enter a number: ");
-    scanf("%ld", &aNumber);
-    ReverseNumber(aNumber);
-    
-    
-    char aLetter; 
-    printf("Please enter a character: ");
-    scanf("%c",&aLetter);
-    IsVowel(aLetter);
-   
+// Task C - determine the position of the highest bit that is set (0 index); Print out the value as a decimal value, in binary and the highest bit set
+int HighestBitSet(int value){
+    int number, order = -1; 
+    for(int i=0; i < INT_SIZE; i++){
+        if((number>>i) & 1){
+            order = i;
+        }
+    }
+    if(order != 1){
+        printf("\n The highest order bit set in %d is %d", number, order); 
+    }
+    else{
+        printf("0 has no bit set"); 
+    }
+    return 0;
 }
-    //int num1, num2; // declares 2 variables called num1 and num2
-    //float fraction;    
-    //char character;
-    //char str[50];   // char array of size 50
-   // printf("Enter two numbers\n"); // print f means "print formatted" 
+
+// made a separate binary converter function that runs before HighestBitSet to provide binary equivalent 
+int binaryConvert(){
+    int a[10], num, y, z;
+    printf("\n Please Enter a Decimal Number You want to Convert  :  ");
+    scanf("%d", &num);
     
-    // Taking integer as input from user
-    //scanf(" %d%i", &num1, &num2);
-    //printf("\n\nThe two numbers You have entered are %d and %i\n\n", num1, num2);
-    // Taking float or fraction as input from the user
-    //printf("\n\nEnter a Decimal number\n");
-   // scanf(" %f", &fraction); 
-    //printf("\n\nThe float or fraction that you have entered is %f", fraction);
-    // Taking Character as input from the user
-   // printf("\n\nEnter a Character\n");
-   // scanf(" %c",&character);
-    //printf("\n\nThe character that you have entered is %c and the ASCII number is %d", character, character);
-    //getchar();
-    //printf("\n\nEnter your complete name:\n\n\n");
-   // gets(str);
-   // printf("\n\nWelcome to ECEGR 2020  %s\n\n\n", str);
-   // printf("\n\n\t\t\tCoding is Fun !\n\n\n");
+    for(y = 0; num > 0; y++){
+        a[y] = num % 2;
+        num = num / 2;
+    }
     
-   
-    //printf("Press Enter to quit");
-    //scanf("%c",&character);
-    //return 0; 
+    printf("\n Binary Equivalent of a Given Number =  ");
+    for(z = y - 1; z >= 0; z--){
+        printf(" %d ", a[z]);
+    }
+    printf("\n");
+    return 0; 
+}
+// Task D - input 5 floating point values. Print them out in reverse order to that in which they were entered; Save the values to a file first in the order they were entered and in reverse order
+void ReverseIt(void){
+    // declare a file pointer called reversefile 
+    FILE *reverseFile;
+    reverseFile = fopen("Lab_2Valencia/ReverseIt.txt","w+");
+    float store[5];
+    // prints the inputted float values 
+    printf("\n Please enter a float value: \n");
+    for(int a = 0; a < 5; a++){
+        float value; 
+        scanf("%f",&value);
+        store[a] = value; 
+        fprintf(reverseFile, "%f\n",value);
+    }
+    // prints the reverse of inputted floats 
+    for(int b = 5; b > 0; b--){
+        printf("%f\n",store[b-1]);
+        fprintf(reverseFile, "%f\n",store[b-1]);
+    }
+}
+// Task E - function should open the file that was saved in (D), read the values and prints them all out.
+void ReverseItAgain(void){
+    FILE *reverseFile; 
+    reverseFile = fopen("Lab_2Valencia/ReverseIt.txt","r"); // the "r" means to read the mentioned file 
+    float n0, n1, n2, n3, n4, n5, n6, n7, n8, n9; 
+    fscanf(reverseFile, "%f %f %f %f %f %f %f %f %f %f", &n0, &n1, &n2, &n3, &n4, &n5, &n6, &n7, &n8,&n9);
+    printf("%f %f %f %f %f %f %f %f %f %f \n", n0, n1, n2, n3, n4, n5, n6, n7, n8,n9); 
+}
+
+// Task F - make a pyramid using asterisks depending on number the user inputs + save into a file 
+void Pyramid(int lines){
+    FILE *pyramidFile;
+    // part 1 produces the pyramid itself, size according to user input 
+   int i, space, rows, k = 0;
+   printf("\n Enter the number of rows: ");
+   scanf("%d", &rows);
+   pyramidFile = fopen("Lab_2Valencia/pyramidFile.txt","w+");
+   for (i = 1; i <= rows; ++i, k = 0) {
+      for (space = 1; space <= rows - i; ++space) {
+         printf("  ");
+      }
+      while (k != 2 * i - 1) {
+         printf("* ");
+         ++k;
+      }
+      printf("\n");
+   }
+    for (i = 1; i <= rows; ++i, k = 0) {
+      for (space = 1; space <= rows - i; ++space) {
+         fprintf(pyramidFile,"  ");
+      }
+      while (k != 2 * i - 1) {
+         fprintf(pyramidFile,"* ");
+         ++k;
+      }
+      fprintf(pyramidFile,"\n");
+   }
+}
+
+
+int main(){
+    // declares local long variable to test Factorial function 
+    long numTest;
+    printf("Enter a number to find its factorial: ");
+    scanf("%ld",&numTest);
+    printf("The factorial of %ld is: %ld \n",numTest,Factorial(numTest));
+    
+    // declare local long variables to check if they're palindromes 
+    //long value; 
+
+    // ask user for long number to check for palindrome
+   // printf(" \n Please enter a number: ");
+   // scanf("%ld",&value);
+   // isPalindrome(value); 
+    //binaryConvert(); 
+    //int value; 
+    //HighestBitSet(value);
+    
+    //ReverseIt(); 
+    //ReverseItAgain();
+    
+    // calls Pyramid function to produce an asterisk pyramid 
+    //int lines;
+    //Pyramid(lines);
+}
+
+ 
 
 
