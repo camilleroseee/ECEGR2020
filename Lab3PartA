@@ -1,0 +1,25 @@
+#include <stdio.h>
+// Declaration of functions 
+void ReverseArray(void); 
+// declared a global array to be used throughout program 
+int theArray[10] =  {1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
+// Task A - reverse elements of theArray and print out the contents -- works but I'm not getting an output 
+void ReverseArray(void){ 
+  int temp;
+  int size = 10; // declared a size variable that is the size of global array 
+  // first for loop prints out the elements of array in reverse 
+  for(int i = 0; i<size/2; i++){
+    temp = theArray[i];
+    theArray[i] = theArray[size-i-1];
+    theArray[size-i-1] = temp;
+    }
+    for(int j = 0; j < size; j++){
+        printf("%d,", theArray[j]); 
+    }
+}
+
+int main(void) {
+  // calling the ReverseArray function to print the array contents in reverse 
+  ReverseArray();
+}
