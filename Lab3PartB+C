@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+// Part B & C programs 
+int numberIn = 0; 
+// student structure variable that contains ID, firstName, lastName, and GPA 
+typedef struct student{ // using a typedef to call student struct in various parts of program 
+    int ID; // ID number is an int 
+    char firstName[30]; // first name can be string of size 30 
+    char lastName[30];  // last name can be string of size 30 
+    float GPA; // GPA is stored as a float value 
+} Student; // this is capitalized just as a symbolic abbreviation for structure 
+
+// declaring functions before main 
+Student* makestudProfile(void);
+void sortGPA(Student** studGPA);
+void readStudentRecords(Student** arrayinput);
+
+// makes the student profile 
+Student* makestudProfile(){
+	Student* proPtr = (Student*) malloc(sizeof(Student));
+	int id_input = 0;
+	char first_input[30] = "";
+	char last_input[30] = "";
+	float gpa_input = 0.0;
+	
+	printf("\nEnter the student's ID number: ");
+	scanf("%d", &id_input);
+	proPtr ->ID = id_input;
+	
+	printf("\nEnter the student's first name: ");
+	scanf("%29s",first_input);
+	strcpy(proPtr ->firstName, first_input);
+	
+	printf("\nEnter the student's last name: ");
+	scanf("%29s", last_input);
+	strcpy(proPtr ->lastName, last_input);
+	
+	printf("\nEnter the student's GPA: ");
+	scanf("%f", &gpa_input);
+	proPtr ->GPA = gpa_input;
+	
+	return proPtr ;
+}
+
+// sorts the student GPAs using nested for loops and if statements
+void sortGPA(Student** studGPA)
+{
+	for(int i = 0; i<numberIn-1; i++){
+		for(int j = 0; j<numberIn-1; j++){
+			if(studGPA[i]->GPA > studGPA[j]->GPA){
+				Student* tempValue = studGPA[i];
+				studGPA[i] = studGPA[j];
+				studGPA[j] = tempValue;
+			}
+		}
+	}
+}
+
+// presents the user-inputted student records 
+void presentRecords(Student** arrayinput){
+    FILE *fp; 
+	printf("STUDENT RECORDS-----\n");
+	char first_output[30], last_output[30];
+	int numOutput, id_output;
+	float gpaOutput, averageGPA;
+	
+	fp = fopen("StudentRecords.txt", "r");
+	fscanf(fp, "Number of students: %d", &numOutput);
+	printf("\nNumber of students: %d", numOutput);
+	
+	for(int i=0; i<numberIn; i++)
+	{
+		Student* somePtr = (Student*) malloc(sizeof(Student));
+		
+		fscanf(fp, "\n\nStudent ID: %d", &id_output);
+		somePtr->ID = id_output;
+		printf("\n\nStudent ID: %d", id_output);
+		
+		fscanf(fp, "\nStudent First Name: %s", first_output);
+		strcpy(somePtr->firstName, first_output);
+		printf("\nStudent First Name: %s", first_output);
+		
+		fscanf(fp, "\nStudent Last Name: %s", last_output);
+		strcpy(somePtr->lastName, last_output);
+		printf("\nStudent Last Name: %s", last_output);
+		
+		fscanf(fp, "\nStudent GPA: %f", &gpaOutput);
+		somePtr->GPA = gpaOutput;
+		printf("\nStudent GPA: %f", gpaOutput);
+		
+		averageGPA += gpaOutput;
+		
+		arrayinput[i] = somePtr;
+	}
+	
+	averageGPA /= numberIn;
+	printf("\n\n The average GPA is: %f", averageGPA);
+	
+	printf("\n\n--------------------\n");
+}
+
+// testing functions in main 
+int main(){
+    FILE *fp; 
+	printf("\n\nEnter the number of students in the class: ");
+	scanf("%d", &numberIn);
+	Student **studArr = (Student**) malloc(numberIn * sizeof(Student*));
+	for(int i = 0; i < numberIn; i++){
+		studArr[i] = makestudProfile();
+	}
+	sortGPA(studArr);
+	fp = fopen("StudentRecords.txt", "w+");
+	fprintf(fp, "Number of students: %d ", numberIn);
+	for(int i = 0; i < numberIn; i++)
+	{
+		fprintf(fp, "\n\nStudent ID: %d", studArr[i]->ID);
+		fprintf(fp, "\nStudent First Name: %s", studArr[i]->firstName);
+		fprintf(fp, "\nStudent Last Name: %s", studArr[i]->lastName);
+		fprintf(fp, "\nStudent GPA: %f", studArr[i]->GPA);
+	}
+	free(studArr); // frees the allocated memory for studArr
+	Student** studArrNew= (Student**) malloc(numberIn * sizeof(Student*));
+	presentRecords(studArrNew);
+	free(studArrNew);
+	
+}
