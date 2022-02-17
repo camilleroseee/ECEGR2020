@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+// declaration of functions 
+int vowelCount(char *sentence); 
+int consonantCount(char *sentence); 
+void convertUpper(char *sentence);
+void convertLower(char *sentence);
+void reverseWords(char *sentence, int start, int end);
+
+// this function counts how many vowels input string has 
+int vowelCount(char *sentence){
+  int count = 0; 
+  for(int i = 0; sentence[i] != '\0';i++){
+    if (sentence[i] == 'a' || sentence[i] == 'A' || sentence[i] == 'e' || sentence[i] == 'E' || sentence[i] == 'i' ||
+    sentence[i] == 'I' || sentence[i] =='o' || sentence[i]=='O' || sentence[i] == 'u' || sentence[i] == 'U'){
+    count++; 
+    }
+  return count; 
+  }
+}
+// this function counts how many consonants an input string has 
+int consonantCount(char *sentence){
+  int counter = 0; 
+  for(int i = 0;sentence[i] != '\0';i++){
+    if(!(sentence[i] == 'a' && sentence[i] == 'A' && sentence[i] == 'e' && sentence[i] == 'E' && sentence[i] == 'i' &&
+    sentence[i] == 'I' && sentence[i] =='o' && sentence[i]=='O' && sentence[i] == 'u' && sentence[i] == 'U' && sentence[i]) == ','
+    && sentence[i]== '.'){
+      counter++; 
+    }
+  }
+  return counter; 
+}
+
+// this function converts lower case to upper case 
+void convertUpper(char *sentence){
+  for(int i=0; sentence[i]!='\0';i++){
+    sentence[i] = toupper(sentence[i]); // toupper function changes a lower case to upper case 
+  }
+} 
+// this function converts uppercase to lower case 
+void convertLower(char *sentence){
+  for(int i=0; sentence[i]!='\0';i++){
+    sentence[i] = tolower(sentence[i]); // tolower function changes uppercase to lower case  
+  }
+}
+
+// this function reverses words in a string, word by word (Part E)
+void reverseWords(char *sentence,int start, int end){
+  char temp; 
+  while(start < end){
+    temp=sentence[start];
+    sentence[start]=sentence[end];
+    sentence[end]=temp;
+    start++;
+    end--;
+  }  
+}
+
+// adding another option to the menu --- Part E 
+// testing all functions in main 
+int main(){
+  char sentence[100];
+  bool menu = true; // 
+  char ch = 'M';
+
+  printf("Enter string: ");
+  gets(sentence);
+  // using an infinite while loop to run the menu continuously 
+  while(1){
+    if(menu==true && ch=='M'){
+    printf("Menu \n");
+    printf("A) Count the number of vowels in the string \n");
+    printf("B) Count the number of consonants in the string \n");
+    printf("C) Convert the string to uppercase \n");
+    printf("D) Convert the string to lowercase \n");
+    printf("E) Display the current string \n");
+    printf("F) Enter another string \n");
+    printf("M) Display the menu \n");
+    printf("X) Exit the program \n");
+    menu = false;
+    }
+    printf("Enter your choice: ");
+    ch = getchar();
+    char junk = getchar();
+    // series of if/else-if statements to go through the menu options 
+    if(ch == 'A'){
+      printf("The number of vowels: %d ",vowelCount(sentence));
+    }
+    else if(ch == 'B'){
+      printf("The number of consonants: %d ", consonantCount(sentence));
+    }
+    else if(ch == 'C'){
+      printf("String in uppercase is: %s",convertUpper);
+    }
+    else if(ch == 'D'){
+      printf("String in lowercase is: %s ",convertLower);
+    }
+    else if(ch == 'E'){
+      printf("Current string is: %s ", ch);
+    }
+    else if(ch == 'F'){
+      printf("Another string: %s ",ch);
+    }
+    else if(ch == 'G'){     // adding a new option to the menu -- reversing the string 
+      char sentence[100];
+      printf("Enter a string");
+      scanf("%s",&sentence);
+      int start, end;
+      end=0;
+      start=0;
+      while(sentence[end]){}
+        for(end=start;sentence[end]&&sentence[end]!=' ';end++){
+        reverseWords(sentence, start, end-1);
+        start=end+1;
+        }
+         printf("%s ",sentence);
+        return 0;
+    }
+    else if(ch == 'M'){
+      menu = true; 
+    }
+    else{
+    break; // if 'X' is entered, then exit the loop 
+    }
+    printf("\n ");
+    }   
+    return 0; 
+}
