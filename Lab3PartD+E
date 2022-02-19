@@ -37,13 +37,13 @@ int consonantCount(char *sentence){
 
 // this function converts lower case to upper case 
 void convertUpper(char *sentence){
-  for(int i=0; sentence[i]!='\0';i++){
+  for(int i=0; i<(int)strlen(sentence);i++){
     sentence[i] = toupper(sentence[i]); // toupper function changes a lower case to upper case 
   }
 } 
 // this function converts uppercase to lower case 
 void convertLower(char *sentence){
-  for(int i=0; sentence[i]!='\0';i++){
+  for(int i=0; i <(int)strlen(sentence);i++){
     sentence[i] = tolower(sentence[i]); // tolower function changes uppercase to lower case  
   }
 }
