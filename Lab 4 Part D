@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Lab 4, Part D -- Implementing Queue using Linked List 
+
+// Data structure to represent a queue
+typedef struct Queue{
+	float data;
+	struct Queue* next; // using the next pointer to make this into a linked list 
+} Queue;
+
+Queue* initialItem = NULL;
+// Utility function to initialize the queue
+Queue* newQueue(float input){
+  Queue* brandNewQ = (Queue*)malloc(sizeof(Queue));
+	if (brandNewQ != NULL)
+	{
+		brandNewQ->data = input; 
+		brandNewQ->next = NULL;
+	} 
+    return brandNewQ;
+}
+ 
+// Utility function to return the size of the queue
+int size(){
+	Queue* node = initialItem;
+	int counter = 0;
+	while(node != NULL){
+		counter++;
+		node = node->next;
+	}
+    return counter;
+}
+ 
+// Utility function to check if the queue is empty or not
+int isEmpty(){
+    return (initialItem == NULL);       
+}
+ 
+// Utility function to check if the queue is full or not
+int isFull(){
+    return (malloc(sizeof(Queue)) == NULL);  
+}
+ 
+// Utility function to add an element `x` to the queue
+int insert(float x){
+    // check if the queue is already full
+    if (isFull()){
+        printf("Queue Full!\n");
+        return -1;
+    }
+	
+	Queue* newNode = newQueue(x);
+ 
+    printf("Inserting %f\n", x);
+ 
+    // add an element to queue
+	if(initialItem == NULL){
+		initialItem = newNode;
+		return 0;
+	}
+	Queue* presentNode = initialItem;
+	while(presentNode->next != NULL){
+		presentNode = presentNode->next;
+	}
+	presentNode->next = newNode;
+	newNode->next = NULL;
+    
+    return 0;
+}
+ 
+// Utility function to remove an element from the queue
+int removeQ(){
+    // check for queue underflow
+    if (isEmpty()){
+        printf("Queue Empty!\n");
+        return -1;
+    }
+ 
+    // remove element decrement queue size by 1
+    printf("Removing %f\n", initialItem->data);
+	Queue* tempVal = initialItem;
+	initialItem = initialItem->next;
+	free(tempVal);
+	
+    return 0;
+}
+ 
+// Utility function to peek at first element from the queue
+int peek(float* x){
+    // check for queue underflow
+    if (isEmpty()){
+        printf("Queue Empty!\n");
+        return -1;
+    }
+    // return front of queue value
+    *x = initialItem->data;
+    return 0;
+}
+
+// testing my program in main 
+int main(){
+    // create a queue of capacity 5
+    float value;
+ 
+    insert(1.0);
+    insert(2.0);
+    insert(3.0);
+ 
+    printf("The queue size is %d\n", size());
+
+    peek(&value);
+    printf("Top val on queue is %f\n", value);
+
+    removeQ();
+    removeQ();
+    removeQ();
+ 
+    if (isEmpty()){
+        printf("The queue is empty");
+    }
+    else{
+        printf("The queue is not empty");
+    } 
+    return 0;
+}
