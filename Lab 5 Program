@@ -1,0 +1,379 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+enum Department {Philosophy, Theology, Math, Biology, Chemistry, Engineering, Unknown};
+
+// Main classes for this program: Student, Professor, and Employee 
+
+// PRIVATE student class has same attributes as Student struct from before 
+class Student{
+
+private:
+	  int  ID;
+    char* firstName; // first and last names are allocated on the heap 
+    char* lastName;
+    float GPA;
+
+// public operator to assign student characteristics 
+public:
+	Student();
+	Student(int id_input, char *first_input, char *last_input, float gpa_input);
+	Student(Student &init);
+	~Student();
+	Student& operator=(Student const &s){
+		this->ID = s.ID;
+		setFirstName(s.firstName);
+		setLastName(s.lastName);
+		this->GPA = s.GPA;
+		printf("Student Assignment Operator completed.\n");
+		return *this;
+	}
+	
+	// Get methods
+	int getID(){
+		return ID;
+	}
+	float getGPA(){
+		return GPA;
+	}
+	char* getFirstName(){
+		return firstName;
+	}
+	char* getLastName(){
+		return lastName;
+	}
+
+	// Set methods
+	void setID(int id_input){
+		ID = id_input;
+	}
+
+	void setGPA(float gpa_input){
+		GPA = gpa_input;
+	}
+
+	void setFirstName(char *first_input){
+		firstName = (char*) malloc(sizeof(strlen(first_input)+1)); //allocating memory for the first name 
+		strcpy(firstName, first_input); // using strcopy to save the info 
+	}
+
+	void setLastName(char *last_input){
+		lastName = (char*) malloc(sizeof(strlen(last_input)+1)); // allocating memory for the last name 
+		strcpy(lastName, last_input);
+	}
+};
+
+// Professor class with similar attributes to the Student class 
+class Professor{
+  private:
+	int ID;
+	char* firstName; // just like Student class, first and last names are allocated on the heap 
+  char* lastName;
+  float salary;
+	bool tenured;
+	Department department;
+
+public:
+	Professor();
+	Professor(int id_input, char* first_input, char* last_input, float salary_input, bool tenured_input, Department dept_input);
+	Professor(Professor &init);
+	~Professor();
+	Professor& operator= (Professor const &prof){
+		this->ID = prof.ID;
+		setFirstName(prof.firstName);
+		setLastName(prof.lastName);
+		this->salary = prof.salary;
+		this->tenured = prof.tenured;
+		this->department = prof.department;
+		printf("Professor Assignment Operator completed.\n");
+		return *this;
+	}
+	
+	//Get methods for Professor class -- essentially same strategy as Student class 
+	int getID(){
+		return ID;
+	}
+
+	char* getFirstName(){
+		return firstName;
+	}
+
+	char* getLastName(){
+		return lastName;
+	}
+
+	float getSalary(){
+		return salary;
+	}
+
+	bool getTenured(){
+		return tenured;
+	}
+
+	Department getDepartment(){
+		return department;
+	}
+	
+	//Set methods -- essentially the same as Student class's set methods 
+	void setID(int id_input){
+		ID = id_input;
+	}
+	
+  void setFirstName(char *first_input){
+		firstName = (char*) malloc(sizeof(strlen(first_input)+1));
+		strcpy(firstName, first_input);
+	}
+
+	void setLastName(char *last_input){
+		lastName = (char*) malloc(sizeof(strlen(last_input)+1));
+		strcpy(lastName, last_input);
+	}
+
+	void setSalary(float salary_input){
+		salary = salary_input;
+	}
+
+	void setTenured(bool tenured_input){
+		tenured = tenured_input;
+	}
+
+	void setDepartment(Department dept_input){
+		department = dept_input;
+	}	
+};
+
+// Employee class 
+class Employee{
+// slightly different attributes: firstName, lastName, and salary 
+private:
+	int  ID;
+    char *firstName;
+    char *lastName;
+    float salary;
+	
+public:
+	Employee();
+	Employee(int id_input, char* first_input, char* last_input, float salary_input);
+	Employee(Employee &init);
+	~Employee();
+	Employee& operator= (Employee const &emp){
+		this->ID = emp.ID;
+		setFirstName(emp.firstName);
+		setLastName(emp.lastName);
+		this->salary = emp.salary;
+		printf("Employee Assignment Operator completed.\n");
+		return *this;
+	}
+	
+	//Get methods for employee class 
+	int getID(){
+		return ID;
+	}
+
+	char* getFirstName(){
+		return firstName;
+	}
+
+	char* getLastName(){
+		return lastName;
+	}
+
+	float getSalary(){
+		return salary;
+	}
+	
+	//Set methods for employee class 
+	void setID(int id_input){
+		ID = id_input;
+	}
+
+	void setFirstName(char *first_input){
+		firstName = (char*) malloc(sizeof(strlen(first_input)+1));
+		strcpy(firstName, first_input);
+	}
+
+	void setLastName(char *last_input){
+		lastName = (char*) malloc(sizeof(strlen(last_input)+1));
+		strcpy(lastName, last_input);
+	}
+
+	void setSalary(float salary_input){
+		salary = salary_input;
+	}
+};
+
+// default constructor for a Student (:: indicates constructor def outside of Student class)
+Student :: Student(){
+	this->ID = 00000;
+	this->firstName = (char*) malloc(sizeof(strlen((char*) "<not entered>")+1));
+	strcpy(this->firstName, (char*) "<not entered>");
+	this->lastName = (char*) malloc(sizeof(strlen((char*) "<not entered>")+1));
+	strcpy(this->lastName, (char*) "<not entered>");
+	this->GPA = 0.0;
+	printf("Student Default Constructor completed.\n");
+}
+
+// specific student constructor 
+Student :: Student(int id_input, char* first_input, char* last_input, float gpa_input){
+	this->ID = id_input;
+	this->firstName = (char*) malloc(sizeof(strlen(first_input)+1));
+	strcpy(this->firstName, first_input);
+	this->lastName = (char*) malloc(sizeof(strlen(last_input)+1));
+	strcpy(this->lastName, last_input);
+	this->GPA = gpa_input;
+	printf("Student Constructor completed for %s %s.\n", firstName, lastName);
+}
+
+// constructor to copy the student info 
+Student :: Student(Student &initial){
+	ID = initial.ID;
+	GPA = initial.GPA;
+	if(initial.firstName){
+		firstName = (char*) malloc(sizeof(strlen(initial.firstName)+1));
+		strcpy(firstName, initial.firstName);
+	}
+	if(initial.lastName){
+		lastName = (char*) malloc(sizeof(strlen(initial.lastName)+1));
+		strcpy(lastName, initial.lastName);
+	}
+	printf("Student Copy Constructor completed.\n");
+}
+
+// destructor to free the memory used by the constructor (~ indicates the following is a desctructor for the student class)
+Student :: ~Student(){
+	printf("Student Destructor called for %s %s.\n", firstName, lastName);
+	if(firstName){
+		free(firstName);
+	}
+	if(lastName){
+		free(lastName);
+	}
+}
+
+// default constructor for Professor 
+Professor :: Professor(){
+	this->ID = 00000;
+	this->firstName = (char*) malloc(sizeof(strlen((char*) "<not entered>")+1));
+	strcpy(this->firstName, (char*) "<not entered>");
+	this->lastName = (char*) malloc(sizeof(strlen((char*) "<not entered>")+1));
+	strcpy(this->lastName, (char*) "<not entered>");
+	salary = 0.0;
+	tenured = false;
+	department = Unknown;
+	printf("Professor Default Constructor completed.\n");
+}
+
+Professor :: Professor(int id_input, char* first_input, char* last_input, float salary_input, bool tenure_input, Department dept_input){
+	this->ID = id_input;
+	firstName = (char*) malloc(sizeof(strlen(first_input)+1));
+	strcpy(firstName, first_input);
+	lastName = (char*) malloc(sizeof(strlen(last_input)+1));
+	strcpy(lastName, last_input);
+	this->salary = salary_input;
+	this->tenured = tenure_input;
+	this->department = dept_input;
+	printf("Professor Constructor completed for %s %s.\n", firstName, lastName);
+}
+
+Professor :: Professor(Professor &initial){
+	ID = initial.ID;
+	if(initial.firstName){
+		firstName = (char*) malloc(sizeof(strlen(initial.firstName)+1));
+		strcpy(firstName, initial.firstName);
+	}
+	if(initial.lastName){
+		lastName = (char*) malloc(sizeof(strlen(initial.lastName)+1));
+		strcpy(lastName, initial.lastName);
+	}
+	salary = initial.salary;
+	tenured = initial.tenured;
+	department = initial.department;
+	printf("Professor Copy Constructor completed.\n");
+}
+
+// prof destructor 
+Professor :: ~Professor(){
+	if(firstName){
+		free(firstName);
+	}
+	if(lastName){
+		free(lastName);
+	}
+	printf("Professor Destructor completed.\n");
+}
+
+Employee :: Employee(){
+	this->ID = 00000;
+	this->firstName = (char*) malloc(sizeof(strlen((char*) "<not entered>")+1));
+	strcpy(this->firstName, (char*) "<not entered>");
+	this->lastName = (char*) malloc(sizeof(strlen((char*) "<not entered>")+1));
+	strcpy(this->lastName, (char*) "<not entered>");
+	salary = 0.0;
+	printf("Employee Default Constructor completed.\n");
+}
+
+Employee :: Employee(int id_input, char* first_input, char* last_input, float salary_input){
+	this->ID = id_input;
+	firstName = (char*) malloc(sizeof(strlen(first_input)+1));
+	strcpy(firstName, first_input);
+	lastName = (char*) malloc(sizeof(strlen(last_input)+1));
+	strcpy(lastName, last_input);
+	this->salary = salary_input;
+	printf("Employee Constructor completed for %s %s.\n", firstName, lastName);
+}
+
+Employee :: Employee(Employee &initial){
+	ID = initial.ID;
+	if(initial.firstName){
+		firstName = (char*) malloc(sizeof(strlen(initial.firstName)+1));
+		strcpy(firstName, initial.firstName);
+	}
+	if(initial.lastName){
+		lastName = (char*) malloc(sizeof(strlen(initial.lastName)+1));
+		strcpy(lastName, initial.lastName);
+	}
+	salary = initial.salary;
+	printf("Employee Copy Constructor completed.\n");
+}
+
+// employee destructor 
+Employee :: ~Employee(){
+	if(firstName){
+		free(firstName); // makes sure to free memory for firstName and lastName 
+	}
+	if(lastName){
+		free(lastName);
+	}
+	printf("Employee Destructor completed.\n");
+}
+
+int main(){ 
+  // in order to prevent memory leaks, the destructors are called 
+	Student stud1(1111, (char*) "Aron", (char*) "Apple", 1.0);
+	printf("%d\n", stud1.getID());
+	printf("%s %s\n", stud1.getFirstName(), stud1.getLastName());
+	printf("%f\n", stud1.getGPA());
+	Student stud2;
+	printf("%d\n", stud2.getID());
+	printf("%s %s\n", stud2.getFirstName(), stud2.getLastName());
+	printf("%f\n", stud2.getGPA());
+	Student stud3 = stud1;
+	stud2 = stud1;
+	printf("%d\n", stud3.getID());
+	printf("%s %s\n", stud3.getFirstName(), stud3.getLastName());
+	printf("%f\n", stud3.getGPA());
+	printf("%d\n", stud2.getID());
+	printf("%s %s\n", stud2.getFirstName(), stud2.getLastName());
+	printf("%f\n", stud2.getGPA());
+	if((stud1.getID() == stud2.getID()) && (stud2.getGPA() == stud3.getGPA())){
+		printf("All inputted students are the same.\n");
+	}	
+	stud3.setFirstName((char*) "Ben");
+	stud3.setLastName((char*) "Blueberry");
+	printf("%s %s\n", stud3.getFirstName(), stud3.getLastName());
+	stud2.setFirstName((char*) "Cal");
+	stud2.setLastName((char*) "Corn");
+	printf("%s %s\n", stud2.getFirstName(), stud2.getLastName());
+}
