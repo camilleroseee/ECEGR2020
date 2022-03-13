@@ -55,11 +55,13 @@ public:
 	}
 
 	void setFirstName(char *first_input){
+		free(firstName);
 		firstName = (char*) malloc(sizeof(strlen(first_input)+1)); //allocating memory for the first name 
 		strcpy(firstName, first_input); // using strcopy to save the info 
 	}
 
 	void setLastName(char *last_input){
+		free(lastName); 
 		lastName = (char*) malloc(sizeof(strlen(last_input)+1)); // allocating memory for the last name 
 		strcpy(lastName, last_input);
 	}
@@ -122,11 +124,13 @@ public:
 	}
 	
   void setFirstName(char *first_input){
+  		free(firstName); // added to prevent memory leak 
 		firstName = (char*) malloc(sizeof(strlen(first_input)+1));
 		strcpy(firstName, first_input);
 	}
 
 	void setLastName(char *last_input){
+		free(lastName);
 		lastName = (char*) malloc(sizeof(strlen(last_input)+1));
 		strcpy(lastName, last_input);
 	}
@@ -190,11 +194,13 @@ public:
 	}
 
 	void setFirstName(char *first_input){
+		free(firstName);
 		firstName = (char*) malloc(sizeof(strlen(first_input)+1));
 		strcpy(firstName, first_input);
 	}
 
 	void setLastName(char *last_input){
+		free(lastName);
 		lastName = (char*) malloc(sizeof(strlen(last_input)+1));
 		strcpy(lastName, last_input);
 	}
