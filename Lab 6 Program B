@@ -1,0 +1,498 @@
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+using namespace std;
+
+enum Department {Philosophy, Theology, Math, Biology, Chemistry, Engineering, Unknown};
+
+class Student{
+private:
+	int  ID;
+    string firstName;
+    string lastName;
+    float GPA;
+	Student* next;
+
+public:
+	Student();
+	Student(int id_input, string first_input, string last_input, float gpa_input);
+	Student(Student &init);
+	~Student();
+	Student& operator=(Student const &s)
+	{
+		this->ID = s.ID;
+		setFirstName(s.firstName);
+		setLastName(s.lastName);
+		this->GPA = s.GPA;
+		//printf("Student Assignment Operator completed.\n");
+		return *this;
+	}
+	
+	// Get methods using String class 
+	int getID(){
+		return ID;
+	}
+	float getGPA(){
+		return GPA;
+	}
+	string getFirstName(){
+		return firstName;
+	}
+	string getLastName(){
+		return lastName;
+	}
+	Student* getNext(){
+		return next;
+	}
+
+	// Set methods using String class 
+	void setID(int id_input){
+		ID = id_input;
+	}
+	void setGPA(float gpa_input){
+		GPA = gpa_input;
+	}
+	void setFirstName(string first_input){
+		this->firstName = first_input;
+	}
+	void setLastName(string last_input){
+		this->lastName = last_input;
+	}
+	void setNext(Student* next_input){
+		next = next_input;
+	}
+};
+
+Student* initialStud = NULL;
+
+Student :: Student(){
+	this->ID = 0000;
+	this->firstName = "(null)";
+	this->lastName = "(null)";
+	this->GPA = 0.0;
+	this->next = NULL;
+	//printf("Student Default Constructor completed.\n");
+}
+
+Student :: Student(int id_input, string first_input, string last_input, float gpa_input){
+	this->ID = id_input;
+	this->firstName = first_input;
+	this->lastName = last_input;
+	this->GPA = gpa_input;
+	this->next = NULL;
+	//printf("Student Constructor completed for %s %s.\n", firstName, lastName);
+}
+
+Student :: Student(Student &init){
+	ID = init.ID;
+	GPA = init.GPA;
+	firstName = "";
+	lastName = "";
+	setFirstName(init.firstName);
+	setLastName(init.lastName);
+	next = init.next;
+	//printf("Student Copy Constructor completed.\n");
+}
+
+Student :: ~Student(){
+	//printf("Student Destructor completed for %s %s.\n", firstName, lastName);
+}
+
+// calling the functions from Lab #4 
+void insertNode(Student* newStud);
+void deleteStudent(Student* newStud);
+void readStudentRecords(void);
+void printList(void);
+void saveList(void);
+void removeStud(int id_input);
+void updateStud(int id_input);
+void showMenu(void); 
+void showUpdateMenu(string first, string last); 
+
+int main(){
+	int user_in = 0;
+	readStudentRec();
+	do {
+		int id_input;
+		string first_input;
+		string last_input;
+		float gpa_input = 0.0;
+		int userID_in; 
+		Student* idChecker = initialStud; // variable to use as an ID checker 
+		
+        // shows the standard menu 
+		showMenu(); 
+		printf("\nWhat would you like to do? "); 
+		cin >> user_in; 
+		
+		switch(user_in) {
+			case 1 : // listing all students 
+			{
+				readList(); 
+				break; 
+            // entering ID of student 
+			case 2 : 
+			{
+				printf("\nEnter the ID of the student: "); 
+				cin >> id_input; 
+				while(idChecker != NULL) 
+				{
+					if(id_input == idChecker->getID()) 
+					{
+						printf("\nEntered ID is currently used by and existing student."); 
+						idChecker = initialStud; 
+						printf("\nEnter the ID of the student: "); 
+						cin >> id_input; 
+					}
+					idChecker = idChecker->getNext(); 
+				}
+				
+				printf("\nEnter the first name of the student: "); 
+				cin >> first_input;
+				
+				printf("\nEnter the last name of the student: "); 
+				cin >> last_input;
+				
+				printf("\nEnter the GPA of the student: "); 
+				cin >> gpa_input; 
+				while((gpa_input > 4.0) || (gpa_input < 1.0)){
+					printf("\nPlease enter a GPA in the range of 4.0 and 1.0."); 
+					printf("\nEnter the GPA of the student: "); 
+					cin >> gpa_input; // takes in value of GPA to the gpa temp variable 
+				}
+				
+				Student* anotherPtr = new Student(id_input, first_input, last_input, gpa_input); 
+				insertNode(anotherPtr); 
+				break; 
+			}
+				
+				
+			case 3 : // removing a student 
+			{
+				printf("\nEnter the ID of the student you wish to delete: "); 
+				cin >> userID_in; 
+				removeStudent(userID_in); // removes student from linked list by searching for ID number 
+				break; 
+			}
+				
+				
+			case 4 : // updating a student 
+			{
+				printf("\nEnter the ID of the student you wish to update: "); 
+				cin >> userID_in; 
+				updateStudent(userID_in); 
+				break; 
+			}
+			
+			case 5 : // quitting the program 
+			{
+				printf("\nExiting Student Program..."); 
+				break; // Leave the switch-case.
+			}
+			
+			default : 
+				printf("\nInvalid input\n"); 
+		}
+	}while(user_in != 5); 
+	saveList();
+	
+	return 0;
+}
+
+void insertNode(Student* newStud){
+	if(initialStud == NULL){
+		initialStud = newStud;
+		return;
+	}
+	else if(initialStud->getNext() == NULL){
+		if(initialStud->getGPA() >= newStud->getGPA()){
+			initialStud->setNext(newStud);
+			return;
+		}
+		else{
+			Student* temp = initialStud;
+			initialStud = newStud;
+			initialStud->setNext(temp);
+			return;
+		}
+	}
+	
+    Student* node = initialStud;
+	
+	while(node->getNext() != NULL){
+		Student* nextNode = node->getNext();
+		
+		if((node->getGPA() > newStud->getGPA()) && (newStud->getGPA() >= nextNode->getGPA())){
+			newStud->setNext(node->getNext());
+			node->setNext(newStud);
+			return;
+		}
+		else if(node->getGPA() <= newStud->getGPA()){
+			newStud->setNext(node);
+			firstStudent = newStud;
+			return;
+		}
+		node = node->getNext();
+	}
+	node->setNext(newStud);
+	newStud->setNext(NULL);
+	return;
+}
+
+void deleteStudent(Student* newStud){
+	Student* currentStud = initialStud;
+	Student* previousStud = NULL;
+	
+	if(initialStud == newStud){
+		initialStud = initialStud->getNext();
+		delete newStud;
+		return;
+	}
+	
+	while(currentStud != NULL && currentStud != newStud){ 
+		previousStud = currentStud; 
+		currentStud = currentStud->getNext(); 
+	}
+	
+	if(currentStud != NULL){
+		previousStud->setNext(currentStud->getNext());
+	}
+	
+	delete newStud;
+}
+
+// essentially same function as part A but using strings 
+void readStudentRec(){ 
+	ifstream readRecords; // using ifstream again 
+	int totalStudents = 0;
+	readRecords.open("StudentRecords.txt");
+	if(!readRecords.is_open()){
+		cerr << "Wasn't able to open the file: StudentRecords.txt" << endl;
+	}
+	else{
+		string temp = "";
+		readRecords >> temp;
+		readRecords >> temp;
+		readRecords >> temp;
+		readRecords >> totalStudents;
+		cout << "\nNumber of Students: " << totalStudents << "\n";
+		for(int i = 0; i < totalStudents; i++){
+			int read_id = 0;
+			string read_firstName = "";
+			string read_lastName= "";
+			float read_gpa = 0.0;
+			readRecords >> temp;
+			readRecords >> temp;
+			readRecords >> read_id;
+			readRecords >> temp;
+			readRecords >> temp;
+			readRecords >> temp;
+			readRecords >> read_first;
+			
+			readRecords >> temp;
+			readRecords >> temp;
+			readRecords >> temp;
+			readRecords >> read_last;
+			
+			readRecords >> temp;
+			readRecords >> temp;
+			readRecords >> read_gpa;
+			
+			Student* newStudent = new Student(read_id, read_firstName, read_lastName, read_gpa);
+			insertNode(newStudent);
+		}
+		readRecords.close(); // closes the file 
+		printf("StudentRecords.txt successfully scanned\n"); 
+	}
+}
+
+void readList(){ 
+	Student* node = initialStud; 
+	printf("\n---STUDENT LINKED LIST---"); 
+	while(node != NULL) {
+		printf("\n\nStudent ID: %d", node->getID());
+		cout << "\nStudent First Name: " << node->getFirstName();
+		cout << "\nStudent Last Name: " << node->getLastName();
+		printf("\nStudent GPA: %f", node->getGPA());
+		node = node->getNext(); // goes from one node to the next 
+	}
+	printf("\n\n----\n"); 
+}
+
+
+void saveList(){ 
+	ofstream openRecords; //using ofstream to output info into file 
+	openRecords.open("StudentRecords.txt");
+	Student* node = initialStud; 
+	int studentCounter = 0; 
+	while(node != NULL){ 
+		studentCounter++; 
+		node = node->getNext(); 
+	}
+	if (!openRecords.is_open()){
+		cout << "Unable to write to this file\n";
+	}
+	else{
+		openRecords << "Number of students: " << studentCounter; 
+		// sets linked list to the initial node 
+        node = firstStudent; 
+		while(node != NULL){ 
+			openRecords << "\n\nStudent ID: " << node->getID();
+			openRecords << "\nStudent First Name: " << node->getFirstName();
+			openRecords << "\nStudent Last Name: " << node->getLastName();
+			openRecords << "\nStudent GPA: " << node->getGPA();
+			node = node->getNext(); // moves from one student to the next 
+		}
+		openRecords.close(); // Closes the file 
+	}
+}
+
+void removeStud(int id_input){ 
+	Student* node = firstStudent; 
+	int checker = 0; 
+	while(node != NULL){ 
+		if(id_input == node->getID()){ 
+			char* first;
+			first = (char*) malloc(strlen(node->getFirstName()+1));
+			char* last;
+			last = (char*) malloc(strlen(node->getLastName()+1));
+			strcpy(first, node->getFirstName());
+			strcpy(last, node->getLastName());
+			deleteStudentNode(node);
+			checker = 1; 
+			printf("\n%s %s was successfully deleted.", first, last); 
+			free(first);
+			free(last);
+			return; 
+		}
+		node = node->getNext(); 
+	}
+    // if statement to check for when ID is unable to be located 
+	if(checker == 0){ 
+		printf("\nThat is an invalid student ID."); 
+		return; 
+	}
+	return; 
+}
+
+void updateStudent(int id_in) {
+	Student* node = initialStud; 
+	Student* prevNode = node;
+	int check = 0; 
+	int user_input = 0; 
+	while(node != NULL){
+		if(id_in == node->getID()) {
+			do {
+				showUpdateMenu(node->getFirstName(), node->getLastName()); 
+				cin >> user_input;
+				int new_id, old_id = 0;
+				string new_firstName = "";
+				string old_firstName = "";
+				string new_lastName = "";
+				string old_lastName = "";
+				string temp = "";
+				float new_gpa, old_gpa = 0.0;
+				Student* idChecker = firstStudent;
+				
+				switch(user_input){ 
+					case 1 : // updating student ID 
+						cout << "\nEnter the new ID: "; 
+						cin >> new_id; 
+						while(idChecker != NULL) {
+							if(new_id == idChecker->getID()) {
+								printf("\nEntered ID is currently used by and existing student."); 
+								idChecker = initialStud; 
+								printf("\nEnter the ID of the student: "); 
+								scanf("%d", &new_id); 
+							}
+							idChecker = idChecker->getNext(); 
+						}
+						old_id = node->getID(); 
+						node->setID(new_id); // changes the ID 
+						printf("\n%d was sucessfully updated to %d", old_id, new_id); 
+						break; 
+					case 2 : // updating student first name 
+						printf("\nEnter the new first name: "); 
+						cin >> new_firstName;
+						old_firstName = node->getFirstName(); 
+						node->setFirstName(new_firstName); 
+						cout << "\n" << old_firstName << " was sucessfully updated to " << new_firstName;
+						break; 
+					case 3 : // updating student last name 
+						printf("\nEnter the new last name: "); 
+						cin >> new_lastName;
+						old_lastName = node->getLastName(); 
+						node->setLastName(new_lastName); 
+						cout << "\n" << old_lastName<< " was sucessfully updated to " << new_lastName; 
+						break; 
+					case 4 : // updating GPA 
+						printf("\nEnter the new GPA: "); 
+						scanf("%f", &new_gpa); 
+						while((new_gpa > 4.0) || (new_gpa < 1.0)) 
+						{
+							printf("\nPlease enter a GPA in the range of 4.0 and 1.0."); 
+							printf("\nEnter the GPA of the student: "); 
+							scanf("%f", &new_gpa); 
+						}
+						old_gpa = node->getGPA(); 
+						node->setGPA(new_gpa); 
+						if(prevNode == node) 
+						{
+							node->setNext(NULL); 
+							insertNode(node); 
+						}
+						else 
+						{
+							prevNode->setNext(node->getNext()); 
+							insertNode(node); 
+						}
+						printf("\n%f was sucessfully updated to %f", old_gpa, new_gpa); 
+						break; 
+					
+					case 5 : // Exiting the program 
+						break; 
+					
+					default : 
+						printf("\nInvalid input\n");
+				}
+			} while(user_input != 5); 
+			return; // Leave the function.
+		}
+		prevNode = node; 
+		node = node->getNext(); 
+	}
+	if(check == 0) // If the ID couldn't be located 
+	{
+		printf("\nThere is no student associated with the given ID."); 
+		return; 
+	}
+}
+
+// shows the standard menu 
+void showMenu(){ 
+	printf("\n---STUDENT MENU---");
+	
+	printf("\n\n(1) List all entered students");
+	printf("\n(2) Add a Student");
+	printf("\n(3) Remove a Student");
+	printf("\n(4) Update a Student");
+	
+	printf("\n\n(5) Exit the program");
+	printf("\n\n----");
+	printf("\n\n");
+}
+
+// shows update student menu 
+void updateStudentMenu(string first, string last){ 
+	printf("\n---UPDATE STUDENT MENU---");
+	cout << "\nWhat would you like to update about " << first << " " << last << "?";
+	printf("\n\n(1) Student ID");
+	printf("\n(2) Student First Name");
+	printf("\n(3) Student Last Name");
+	printf("\n(4) Student GPA");
+	
+	printf("\n\n(5) Exit the program");
+	printf("\n\n----");
+	printf("\n\n");
+}
