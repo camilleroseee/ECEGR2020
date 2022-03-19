@@ -1,0 +1,1200 @@
+#include <iostream>
+#include <sstream>
+#include <cstring>
+#include <fstream>
+#include <typeinfo>
+#include <stdlib.h> 
+
+using namespace std;
+
+// using a template for class comparison 
+template <class DstType, class SrcType>
+bool instanceof(const SrcType* src)
+{
+  return dynamic_cast<const DstType*>(src) != nullptr;
+}
+
+enum Department {Philosophy, Theology, Math, Biology, Chemistry, Engineering, Unknown};
+
+// person class 
+class Person{
+private:
+	int ID;
+    string firstName;
+    string lastName;
+	Person* next;
+	
+public:
+	Person();
+	Person(int id_input, string first_input, string last_input);
+	Person(Person &init);
+	virtual ~Person();
+	Person& operator=(Person const &p){
+		this->ID = p.ID;
+		setFirstName(p.firstName);
+		setLastName(p.lastName);
+		this->next = p.next;
+		//printf("Student Assignment Operator completed.\n");
+		return *this;
+	}
+	
+	// get functions 
+	int getID(){
+		return ID;
+	}
+	string getFirstName(){
+		return firstName;
+	}
+	string getLastName(){
+		return lastName;
+	}
+	Person* getNext(){
+		return next;
+	}
+	
+	// set functions 
+	void setID(int id_input){
+		ID = id_input;
+	}
+	void setFirstName(string first_input){
+		this->firstName = first_input;
+	}
+	void setLastName(string last_input){
+		this->lastName = last_input;
+	}
+	void setNext(Person* next_input){
+		next = next_input;
+	}
+};
+
+Person* firstPerson = NULL;
+
+Person :: Person(){
+	this->ID = 0000;
+	this->firstName = "(null)";
+	this->lastName = "(null)";
+	this->next = NULL;
+}
+
+Person :: Person(int id_input, string first_input, string last_input)
+{
+	this->ID = id_input;
+	this->firstName = first_input;
+	this->lastName = last_input;
+	this->next = NULL;
+}
+
+Person :: Person(Person &init){
+	this->ID = init.ID;
+	this->firstName = "";
+	this->lastName = "";
+	setFirstName(init.firstName);
+	setLastName(init.lastName);
+	this->next = init.next;
+}
+// destructor 
+Person :: ~Person(){
+	
+}
+
+// student class using person template 
+class Student: public Person{
+private:
+	float GPA;
+	
+public:
+	Student();
+	Student(int id_input, string first_input, string last_input, float gpa_input);
+	Student(Student &init);
+	~Student();
+	float getGPA(){
+		return GPA;
+	}
+	
+	void setGPA(float gpa_input){
+		GPA = gpa_input;
+	}
+};
+
+// default student constructor 
+Student :: Student(){
+	this->setID(0000);
+	this->setFirstName("(null)");
+	this->setLastName("(null)");
+	this->GPA = 0.0;
+	this->setNext(NULL);
+	//printf("Student Default Constructor completed.\n");
+}
+
+// student constructor - specific 
+Student :: Student(int id_input, string first_input, string last_input, float gpa_input){
+	setID(id_input);
+	setFirstName(first_input);
+	setLastName(last_input);
+	this->GPA = gpa_input;
+	this->setNext(NULL);
+	//printf("Student Constructor completed for %s %s.\n", firstName, lastName);
+}
+
+// student copy constructor 
+Student :: Student(Student &init){
+	this->setID(init.getID());
+	this->setGPA(init.GPA);
+	this->setFirstName(init.getFirstName());
+	this->setLastName(init.getLastName());
+	this->setNext(init.getNext());
+	//printf("Student Copy Constructor completed.\n");
+}
+
+// student destructor 
+Student :: ~Student(){
+}
+
+// employee class 
+class Employee: public Person{
+private:
+	float salary;
+	
+public:
+	Employee();
+	Employee(int id_input, string first_input, string last_input, float salary_input);
+	Employee(Employee &init);
+	~Employee();
+	float getSalary(){
+		return salary;
+	}
+	
+	void setSalary(float salary_input){
+		salary = salary_input;
+	}
+};
+
+// default employee constructor 
+Employee :: Employee(){
+	this->setID(0000);
+	this->setFirstName("(null)");
+	this->setLastName("(null)");
+	this->salary = 0.0;
+	this->setNext(NULL);
+}
+
+// Employee constructor - specific 
+Employee :: Employee(int id_input, string first_input, string last_input, float salary_input){
+	setID(id_input);
+	setFirstName(first_input);
+	setLastName(last_input);
+	this->salary = salary_input;
+	this->setNext(NULL);
+}
+
+// copy constructor for employee 
+Employee :: Employee(Employee &init){
+	this->setID(init.getID());
+	this->setSalary(init.salary);
+	this->setFirstName(init.getFirstName());
+	this->setLastName(init.getLastName());
+	this->setNext(init.getNext());
+}
+
+// employee destructor 
+Employee :: ~Employee(){
+
+}
+
+// Prof class 
+class Professor: public Employee
+{
+private:
+	bool tenured;
+	Department department;
+	
+public:
+	Professor();
+	Professor(int id_input, string first_input, string last_input, float salary_input, bool ten_input, Department dep_input);
+	Professor(Professor &init);
+	~Professor();
+	bool getTenured(){
+		return tenured;
+	}
+	Department getDepartment(){
+		return department;
+	}
+	
+	void setTenured(bool ten_input){
+		tenured = ten_input;
+	}
+	void setDepartment(Department dep_input){
+		department = dep_input;
+	}
+};
+
+Professor :: Professor(){
+	this->setID(0000);
+	this->setFirstName("(null)");
+	this->setLastName("(null)");
+	this->setSalary(0.0);
+	this->tenured = false;
+	this->department = Unknown;
+	this->setNext(NULL);
+}
+
+Professor :: Professor(int id_input, string first_input, string last_input, float salary_input, bool ten_input, Department dep_input){
+	setID(id_input);
+	setFirstName(first_input);
+	setLastName(last_input);
+	setSalary(salary_input);
+	this->tenured = ten_input;
+	this->department = dep_input;
+	this->setNext(NULL);
+}
+
+Professor :: Professor(Professor &init){
+	this->setID(init.getID());
+	this->setSalary(init.getSalary());
+	this->setFirstName(init.getFirstName());
+	this->setLastName(init.getLastName());
+	this->setTenured(init.tenured);
+	this->setDepartment(init.department);
+	this->setNext(init.getNext());
+}
+
+Professor :: ~Professor(){
+}
+
+// function declarations 
+void readUniversityRecs(void);
+void readList(void);
+void saveList(void);
+void insertPerson(Person* person_in);
+void deletePerson(Person* person_in);
+void addToList();
+void removeFromList(int id_in);
+void updateList(int id_in);
+void showMenu(void);
+void addMenuDisplay(void);
+void showUpdateMenu(string first, string last);
+void updateProfessorMenu(string first, string last);
+void updateEmployeeMenu(string first, string last);
+
+int main(){
+	system("Color 0A"); // changes text color to green 
+	int user_in = 0;
+	readUniversityRecords();
+	do{
+		int userID_input;
+		
+		showMenu();
+		cout << "\nWhat would you like to do? ";
+		cin >> user_in;
+		
+		switch(user_in){
+			case 1 :{
+				readList();
+				break;
+			}
+			case 2 :{
+				addToList();
+				break;
+			}
+			case 3 : {
+				printf("\nEnter the ID of the person you wish to delete: "); 
+				cin >> userID_input; 
+				removeFromList(userID_input);
+				break; 
+			}
+			case 4 :{
+				printf("\nEnter the ID of the person you wish to update: "); 
+				cin >> userID_input; 
+				updateList(userID_input); 
+				break; 
+			}
+			case 5 :{
+				printf("\n Leaving University Program..."); 
+				break; 
+			}
+		}
+		
+	}while(user_in != 5);
+	saveList();
+}
+
+void readUniversityRecs(){
+	ifstream readRecords;
+	int totalPeople = 0;
+	readRecords.open("UniversityRecords.txt.");
+	if(!readRecords.is_open()){
+		cerr << "Wasn't able to open the file: UniversityRecords.txt" << endl;
+	}
+	else{
+		string temp = "";
+		readRecords >> temp;
+		readRecords >> temp;
+		readRecords >> temp;
+		readRecords >> totalPeople;
+		cout << "\nNumber of People: " << totalPeople << "\n";
+		for(int i = 0; i < totalPeople; i++){
+			readRecords >> temp;
+			if(temp == "Student"){
+				int read_id = 0;
+				string read_first = "";
+				string read_last= "";
+				float read_gpa = 0.0;
+				readRecords >> temp;
+				readRecords >> read_id;
+				readRecords >> temp;
+				readRecords >> temp;
+				readRecords >> read_first;
+				readRecords >> temp;
+				readRecords >> temp;
+				readRecords >> read_last;
+				readRecords >> temp;
+				readRecords >> read_gpa;
+				
+				Person* newStudent = new Student(read_id, read_first, read_last, read_gpa);
+				insertNode(newStudent);
+			}
+			else if(temp == "Professor")
+			{
+				int read_id = 0;
+				string read_first = "";
+				string read_last= "";
+				float read_salary = 0.0;
+				bool read_ten = false;
+				Department read_dep = Unknown;
+				readRecords >> temp;
+				readRecords >> read_id;
+				readRecords >> temp;
+				readRecords >> temp;
+				readRecords >> read_first;
+				readRecords >> temp;
+				readRecords >> temp;
+				readRecords >> read_last;
+				readRecords >> temp;
+				readRecords >> read_salary;
+				readRecords >> temp;
+				readRecords >> read_ten;
+				readRecords >> temp;
+				readRecords >> temp;
+				if(temp == "Theology"){
+					read_dep = Theology;
+				}
+				else if(temp == "Math"){
+					read_dep = Math;
+				}
+				else if(temp == "Philsophy"){
+					read_dep = Philosophy;
+				}
+				else if(temp == "Biology"){
+					read_dep = Biology;
+				}
+				else if(temp == "Chemistry"){
+					read_dep = Chemistry;
+				}
+				else if(temp == "Engineering"){
+					read_dep = Engineering;
+				}
+				else{
+					read_dep = Unknown;
+				}
+				
+				Person* newProf = new Professor(read_id, read_first, read_last, read_salary, read_ten, read_dep);
+				insertNode(newProf);
+			}
+			else if(temp == "Employee"){
+				int read_id = 0;
+				string read_first = "";
+				string read_last= "";
+				float read_salary = 0.0;
+				readRecords >> temp;
+				readRecords >> read_id;
+				readRecords >> temp;
+				readRecords >> temp;
+				readRecords >> read_first;
+				readRecords >> temp;
+				readRecords >> temp;
+				readRecords >> read_last;
+				readRecords >> temp;
+				readRecords >> read_salary;
+				
+				Person* newEmp = new Employee(read_id, read_first, read_last, read_salary);
+				insertNode(newEmp);
+			}
+			else{
+				
+			}
+		}
+		readRecords.close();
+		cout << "UniversityRecords.txt successfully scanned" << endl;
+	}
+}
+
+// reads university records 
+void readList(){
+	Person* node = initialPerson;
+	printf("\n==========UNI RECORDS==========");
+	while(node != NULL){
+		if(instanceof<Student>(node)){
+			Student* tempStud = (Student*) node;
+			cout << "\n\nStudent";
+			cout << "\nID: " << tempStud->getID();
+			cout << "\nFirst Name: " << tempStud->getFirstName();
+			cout << "\nLast Name: " << tempStud->getLastName();
+			cout << "\nGPA: " << tempStud->getGPA();
+			//delete tempStudent;
+		}
+		else if(instanceof<Professor>(node))
+		{
+			Professor* tempProf = (Professor*) node;
+			cout << "\n\nProfessor";
+			cout << "\nID: " << tempProf->getID();
+			cout << "\nFirst Name: " << tempProf->getFirstName();
+			cout << "\nLast Name: " << tempProf->getLastName();
+			cout << "\nSalary: " << tempProf->getSalary();
+			if(tempProf->getTenured()){
+				cout << "\nTenured: Yes";
+			}
+			else{
+				cout << "\nTenured: No";
+			}
+			 tempProf->getTenured();
+            // deciding which department prof is apart of 
+			if(tempProf->getDepartment() == Math){
+				cout << "\nDepartment: Math";
+			}
+			else if(tempProf->getDepartment() == Philosophy)
+			{
+				cout << "\nDepartment: Philosophy";
+			}
+			else if(tempProf->getDepartment() == Theology)
+			{
+				cout << "\nDepartment: Theology";
+			}
+			else if(tempProf->getDepartment() == Biology)
+			{
+				cout << "\nDepartment: Biology";
+			}
+			else if(tempProf->getDepartment() == Chemistry)
+			{
+				cout << "\nDepartment: Chemistry";
+			}
+			else if(tempProf->getDepartment() == Engineering)
+			{
+				cout << "\nDepartment: Engineering";
+			}
+			else
+			{
+				cout << "\nDepartment: Unknown";
+			}
+		}
+		else if(instanceof<Employee>(node))
+		{
+			Employee* tempEmploy = (Employee*) node;
+			cout << "\n\nEmployee";
+			cout << "\nID: " << tempEmploy->getID();
+			cout << "\nFirst Name: " << tempEmploy->getFirstName();
+			cout << "\nLast Name: " << tempEmploy->getLastName();
+			cout << "\nSalary: " << tempEmploy->getSalary();
+		}
+		node = node->getNext(); // goes to the next node in list 
+	}
+	printf("\n\n--------------------\n");
+}
+
+void saveList() {
+	ofstream openRecords;
+	openRecords.open("UniversityRecords.txt");
+	Person* node = firstPerson; 
+	while(node != NULL) {
+		personCount++; 
+		node = node->getNext(); 
+	}
+	if (!openRecords.is_open()){
+		cout << "Unable to write to the file\n";
+	}
+	else{
+		openRecords << "Number of people: " << personCount; 
+		node = firstPerson; 
+		while(node != NULL) {
+			if(instanceof<Student>(node)){
+				Student* tempStud = (Student*) node;
+				openRecords << "\n\nStudent";
+				openRecords << "\nID: " << tempStud->getID();
+				openRecords << "\nFirst Name: " << tempStud->getFirstName();
+				openRecords << "\nLast Name: " << tempStud->getLastName();
+				openRecords << "\nGPA: " << tempStud->getGPA();
+			}
+			else if(instanceof<Professor>(node))
+			{
+				Professor* tempProf = (Professor*) node;
+				openRecords << "\n\nProfessor";
+				openRecords << "\nID: " << tempProf->getID();
+				openRecords << "\nFirst Name: " << tempProf->getFirstName();
+				openRecords << "\nLast Name: " << tempProf->getLastName();
+				openRecords << "\nSalary: " << tempProf->getSalary();
+				openRecords << "\nTenured: " << tempProf->getTenured();
+				if(tempProfessor->getDepartment() == Math)
+				{
+					openRecords << "\nDepartment: Math";
+				}
+				else if(tempProfessor->getDepartment() == Philosophy)
+				{
+					openRecords << "\nDepartment: Philosophy";
+				}
+				else if(tempProfessor->getDepartment() == Theology)
+				{
+					openRecords << "\nDepartment: Theology";
+				}
+				else if(tempProfessor->getDepartment() == Biology)
+				{
+					openRecords << "\nDepartment: Biology";
+				}
+				else if(tempProfessor->getDepartment() == Chemistry)
+				{
+					openRecords << "\nDepartment: Chemistry";
+				}
+				else if(tempProfessor->getDepartment() == Engineering)
+				{
+					openRecords << "\nDepartment: Engineering";
+				}
+				else
+				{
+					openRecords << "\nDepartment: Unknown";
+				}
+				
+			}
+			else if(instanceof<Employee>(node))
+			{
+				Employee* tempEmploy = (Employee*) node;
+				openRecords << "\n\nEmployee";
+				openRecords << "\nID: " << tempEmploy->getID();
+				openRecords << "\nFirst Name: " << tempEmploy->getFirstName();
+				openRecords << "\nLast Name: " << tempEmploy->getLastName();
+				openRecords << "\nSalary: " << tempEmploy->getSalary();
+			}
+			
+			node = node->getNext(); 
+		}
+		openRecords.close(); 
+	}
+}
+
+void insertPerson(Person* person_in)
+{
+	if(initialPerson == NULL){
+		initialPerson = person_in;
+		return;
+	}
+	else if(initialPerson->getNext() == NULL)
+	{
+		if(initialPerson->getID() >= person_in->getID())
+		{
+			initialPerson->setNext(person_in);
+			return;
+		}
+		else
+		{
+			Person* temp = initialPerson;
+			initialPerson = person_in;
+			initialPerson->setNext(temp);
+			return;
+		}
+	}
+	
+	Person* node = initialPerson;
+	
+	while(node->getNext() != NULL)
+	{
+		Person* nextNode = node->getNext();
+		
+		if((node->getID() > person_in->getID()) && (person_in->getID() >= nextNode->getID()))
+		{
+			person_in->setNext(node->getNext());
+			node->setNext(person_in);
+			return;
+		}
+		else if(node->getID() <= person_in->getID())
+		{
+			person_in->setNext(node);
+			initialPerson = person_in;
+			return;
+		}
+		node = node->getNext();
+	}
+	node->setNext(person_in);
+	person_in->setNext(NULL);
+	return;
+}
+
+void deletePerson(Person* person_in)
+{
+	Person* currentPerson = initialPerson;
+	Person* prevPerson = NULL;
+	
+	if(initialPerson == person_in){
+		initialPerson = initialPerson->getNext();
+		delete person_in;
+		return;
+	}
+	
+	while(currentPerson != NULL && currentPerson != person_in) {
+		prevPerson = currentPerson; 
+		currentPerson = currentPerson->getNext(); 
+	}
+	
+	if(currentPerson != NULL){
+		prevPerson->setNext(currentPerson->getNext());
+	}
+	delete person_in;
+}
+
+void addToList(){
+	int user_input = 0;
+	do{
+		int id_input;
+		string first_input, last_input;
+		float gpa_input, salary_input;
+		bool ten_input;
+		Department dep_input;
+		string temp;
+		Person* idCheck = initialPerson;
+		
+		addMenuDisplay();
+		cout << "\nWho would you like to add? ";
+		cin >> user_input;
+		
+        // switch case to show user what they can add to person 
+		switch(user_input){
+			case 1 :
+			{
+				printf("\nEnter the ID of the student: "); 
+				cin >> id_input; 
+				while(idChecker != NULL) {
+					if(id_input == idChecker->getID()) 
+						printf("\nEntered ID is currently used by and existing person."); 
+						idChecker = initialPerson; 
+						printf("\nEnter the ID of the student: "); 
+						cin >> id_input; 
+					}
+					idChecker = idChecker->getNext(); 
+				}
+				
+				printf("\nEnter the first name of the student: "); 
+				cin >> first_input;
+				
+				printf("\nEnter the last name of the student: "); 
+				cin >> last_input;
+				
+				printf("\nEnter the GPA of the student: "); 
+				cin >> gpa_input; 
+				while((gpa_input > 4.0) || (gpa_input < 1.0)) {
+					printf("\nPlease enter a GPA in the range of 4.0 and 1.0."); 
+					printf("\nEnter the GPA of the student: "); 
+					cin >> gpa_input; 
+				}
+				
+				Person* anotherPtr = new Student(id_input, first_input, last_input, gpa_input);
+				insertPerson(anotherPtr);
+				break;
+			}
+			case 2 :{
+				printf("\nEnter the ID of the professor: "); 
+				cin >> id_input; 
+				while(idCheck != NULL) {
+					if(id_input == idChecker->getID()) {
+						printf("\nEntered ID is currently used by an existing person."); 
+						idChecker = initialPerson; 
+						printf("\nEnter the ID of the professor: "); 
+						cin >> id_input; 
+					}
+					idChecker = idChecker->getNext(); 
+				}
+				
+				printf("\nEnter the first name of the professor: "); 
+				cin >> first_input;
+				
+				printf("\nEnter the last name of the professor: "); 
+				cin >> last_input;
+				
+				printf("\nEnter the salary of the professor: "); 
+				cin >> salary_input;
+				
+				cout << "\nAre they tenured? (yes/no) ";
+				cin >> temp;
+				string yes = "yes";
+				string no = "no";
+				if(strcasecmp(yes.c_str(), temp.c_str()) == 0)
+					ten_input = true;
+				else if(strcasecmp(no.c_str(), temp.c_str()) == 0)
+					ten_input = false;
+				else{
+					bool check = true;
+					while(check){
+						cout << "\nPlease indicate yes or no: ";
+						cin >> temp;
+						if(strcasecmp(yes.c_str(), temp.c_str()) == 0){
+							ten_input = true;
+							check = false;
+						}
+						else if(strcasecmp(no.c_str(), temp.c_str()) == 0){
+							ten_input = false;
+							check = false;
+						}
+					}
+				}
+				
+				cout << "\nEnter the department of the professor: ";
+				cin >> temp;
+				
+				if(temp == "Math"){dep_input = Math;}
+				else if(temp == "Philsophy"){dep_input = Philosophy;}
+				else if(temp == "Theology"){dep_input = Theology;}
+				else if(temp == "Biology"){dep_input = Biology;}
+				else if(temp == "Chemistry"){dep_input = Chemistry;}
+				else if(temp == "Engineering"){dep_input = Engineering;}
+				else{dep_input = Unknown;}
+				
+				Person* anotherPtr = new Professor(id_input, first_input, last_input, salary_input, ten_input, dep_input);
+				insertPerson(anotherPtr);
+				break;
+			}
+			case 3 :{
+				printf("\nEnter the ID of the employee: "); 
+				cin >> id_input; 
+				while(idChecker != NULL) 
+				{
+					if(id_input == idChecker->getID()) 
+					{
+						printf("\nEntered ID is currently used by an existing person."); 
+						idChecker = firstPerson; 
+						printf("\nEnter the ID of the employee: "); 
+						cin >> id_input; 
+					}
+					idChecker = idChecker->getNext(); 
+				}
+				
+				printf("\nEnter the first name of the employee: "); 
+				cin >> first_input;
+				
+				printf("\nEnter the last name of the employee: "); 
+				cin >> last_input;
+				
+				printf("\nEnter the salary of the employee: "); 
+				cin >> salary_input;
+				
+				Person* anotherPtr = new Employee(id_input, first_input, last_input, salary_input);
+				insertPerson(anotherPtr);
+				break;
+			}
+			
+			case 4 : 
+				break; 
+				
+			default : 
+				printf("\nInvalid input\n"); 
+		}
+	}while(user_input != 4);
+}
+
+void removeFromList(int id_input){
+	Person* node = initialPerson;
+	while(node != NULL){
+		if(id_input == node->getID()) 
+		{
+			string first = node->getFirstName();
+			string last =  node->getLastName();
+			deleteNode(node); 
+			cout << "\n" << first << " " << last << " was successfully deleted.";
+			return; 
+		}
+		node = node->getNext(); 
+	}
+	cout << "\nThere is no person associated with the given ID.";
+}
+
+void updateList(int id_input){
+	Person* node = initialPerson;
+	int user_input = 0;
+	while(node != NULL){
+		if(id_input == node->getID()){
+			if(instanceof<Student>(node)){
+				do{
+					showUpdateMenu(node->getFirstName(), node->getLastName()); 
+					cin >> user_input; 
+					int new_id, old_id = 0;
+					string new_firstName = "";
+					string old_firstName = "";
+					string new_lastName = "";
+					string old_lastName = "";
+					string temp = "";
+					float new_gpa, old_gpa = 0.0;
+					Person* idChecker = initialPerson;
+					Student* tempStud = (Student*) node;
+					
+					switch(user_input) 
+					{
+						case 1 : // updating ID 
+							cout << "\nEnter the new ID: "; 
+							cin >> new_id; 
+							while(idChecker != NULL) {
+								if(new_id == idChecker->getID()) {
+									printf("\nEntered ID is currently used by and existing student."); 
+									idChecker = initialPerson; 
+									printf("\nEnter the ID of the student: "); 
+									scanf("%d", &new_id); 
+								}
+								idChecker = idChecker->getNext(); 
+							}
+							old_id = tempStud->getID(); 
+							tempStud->setID(new_id); 
+							node = tempStud;
+							printf("\n%d was sucessfully updated to %d", old_id, new_id); 
+							break; 
+						case 2 : // updating first name 
+							printf("\nEnter the new first name: "); 
+							cin >> new_firstName;
+							old_firstName = tempStud->getFirstName(); 
+							tempStud->setFirstName(new_firstName); 
+							cout << "\n" << old_firstName << " was sucessfully updated to " << new_firstName;
+							node = tempStud;
+							break; 
+						case 3 : // updating last name 
+							printf("\nEnter the new last name: "); 
+							cin >> new_lastName;
+							old_lastName = tempStud->getLastName(); 
+							tempStud->setLastName(new_lastName); 
+							cout << "\n" << old_last<< " was sucessfully updated to " << new_lastName; 
+							node = tempStud;
+							break; 
+						case 4 : // updating GPA 
+							printf("\nEnter the new GPA: "); 
+							scanf("%f", &new_gpa); 
+							while((new_gpa > 4.0) || (new_gpa < 1.0)) {
+								printf("\nPlease enter a GPA in the range of 4.0 and 1.0."); 
+								printf("\nEnter the GPA of the student: "); 
+								scanf("%f", &new_gpa); 
+							}
+							old_gpa = tempStud->getGPA(); 
+							tempStud->setGPA(new_gpa);
+							node = tempStudent;
+							printf("\n%f was sucessfully updated to %f", old_gpa, new_gpa); 
+							break; 
+						
+						case 5 : // Exiting the program
+							break; 
+						
+						default : 
+							printf("\nInvalid input\n");
+					}
+				}while(user_input != 5);
+				return;
+			}
+			else if(instanceof<Professor>(node)){
+				do{
+					updateProfessorMenu(node->getFirstName(), node->getLastName()); 
+					cin >> user_input; 
+					int new_id, old_id = 0;
+					string new_firstName = "";
+					string old_firstName = "";
+					string new_lastName = "";
+					string old_lastName = "";
+					string temp, temp2 = "";
+					float new_salary, old_salary = 0.0;
+					bool new_ten, old_ten = false;
+					Department new_dep;
+					Person* idChecker = initialPerson;
+					Professor* tempProf = (Professor*) node;
+					
+					switch(user_input) 
+					{
+						case 1 : //updating ID 
+						{
+							cout << "\nEnter the new ID: "; 
+							cin >> new_id; 
+							while(idChecker != NULL) 
+							{
+								if(new_id == idChecker->getID())
+								{
+									printf("\nEntered ID is currently used by and existing student."); 
+									idChecker = firstPerson; 
+									printf("\nEnter the ID of the student: "); 
+									scanf("%d", &new_id); 
+								}
+								idChecker = idChecker->getNext(); 
+							}
+							old_id = tempProf->getID(); 
+							tempProf->setID(new_id); 
+							node = tempProf;
+							printf("\n%d was sucessfully updated to %d", old_id, new_id); 
+							break; 
+						}
+
+						case 2 : // updating first name 
+						{
+							printf("\nEnter the new first name: ");
+							cin >> new_firstName;
+							old_firstName = tempProfessor->getFirstName(); 
+							tempProf->setFirstName(new_firstName); 
+							cout << "\n" << old_firstName << " was sucessfully updated to " << new_firstName;
+							node = tempProf;
+							break; 
+						}
+
+						case 3 : // updating last name 
+						{
+							printf("\nEnter the new last name: "); 
+							cin >> new_lastName;
+							old_lastName = tempProfessor->getLastName(); 
+							tempProfessor->setLastName(new_lastName); 
+							cout << "\n" << old_lastName<< " was sucessfully updated to " << new_lastName; 
+							node = tempProf;
+							break; 
+						}
+						case 4 : // updating GPA 
+						{
+							printf("\nEnter the new Salary: "); 
+							scanf("%f", &new_salary); 
+							old_salary = tempProf->getSalary(); 
+							tempProf->setSalary(new_salary); 
+							node = tempProf;
+							printf("\n%f was sucessfully updated to %f", old_salary, new_salary); 
+							break; 
+						}
+						
+						case 5 : {
+							cout << "\nAre they tenured? (yes/no) ";
+							cin >> temp;
+							string yes = "yes";
+							string no = "no";
+							if(strcasecmp(yes.c_str(), temp.c_str()) == 0)
+								new_ten = true;
+							else if(strcasecmp(no.c_str(), temp.c_str()) == 0)
+								new_ten = false;
+							else
+							{
+								bool check = true;
+								while(check){
+									cout << "\nPlease indicate yes or no: ";
+									cin >> temp;
+									if(strcasecmp(yes.c_str(), temp.c_str()) == 0){
+										new_ten = true;
+										check = false;
+									}
+										
+									else if(strcasecmp(no.c_str(), temp.c_str()) == 0)
+									{
+										new_ten = false;
+										check = false;
+									}
+								}
+							}
+							old_ten = tempProf->getTenured();
+							tempProf->setTenured(new_ten);
+							node = tempProf;
+							if(new_ten == old_ten)
+								cout << "\nNo change was made (value entered was the same as the current value)";
+							else
+								cout << "\nTenured was updated";
+							break;
+						}
+						
+						case 6 :{
+							cout << "\nEnter the department of the professor: ";
+							cin >> temp;
+							
+							if(temp == "Math"){new_dep = Math;}
+							else if(temp == "Philsophy"){new_dep = Philosophy;}
+							else if(temp == "Theology"){new_dep = Theology;}
+							else if(temp == "Biology"){new_dep = Biology;}
+							else if(temp == "Chemistry"){new_dep = Chemistry;}
+							else if(temp == "Engineering"){new_dep = Engineering;}
+							else{new_dep = Unknown;}
+							
+							if(tempProfessor->getDepartment() == Math)
+							{
+								temp2 = "Math";
+							}
+							else if(tempProfessor->getDepartment() == Philosophy)
+							{
+								temp2 = "Philosophy";
+							}
+							else if(tempProfessor->getDepartment() == Theology)
+							{
+								temp2 = "Theology";
+							}
+							else if(tempProfessor->getDepartment() == Biology)
+							{
+								temp2 = "Biology";
+							}
+							else if(tempProfessor->getDepartment() == Chemistry)
+							{
+								temp2 = "Chemistry";
+							}
+							else if(tempProfessor->getDepartment() == Engineering)
+							{
+								temp2 = "Engineering";
+							}
+							else
+							{
+								temp2 = "Unknown";
+							}
+							tempProf->setDepartment(new_dep);
+							node = tempProf;
+							cout << "\n" << temp2 << " was successfully updated to " << temp;
+							break;
+						}
+						
+						case 7 :
+						{
+							break;
+						}
+						
+						default : 
+							printf("\nInvalid input\n");
+					}
+				}while(user_input != 7);
+				return;
+			}
+			else if(instanceof<Employee>(node)){
+				do{
+					updateEmployeeMenu(node->getFirstName(), node->getLastName()); 
+					cin >> user_input; 
+					int new_id, old_id = 0;
+					string new_firstName = "";
+					string old_firstName = "";
+					string new_lastName = "";
+					string old_lastName = "";
+					string temp = "";
+					float new_salary, old_salary = 0.0;
+					Person* idCheck = initialPerson;
+					Employee* tempStud = (Employee*) node;
+					
+					switch(user_input) {
+						case 1 : // updating ID
+							cout << "\nEnter the new ID: "; 
+							cin >> new_id; 
+							while(idCheck != NULL) 
+							{
+								if(new_id == idCheck->getID()) 
+								{
+									printf("\nEntered ID is currently used by and existing student."); 
+									idCheck = initialPerson; 
+									printf("\nEnter the ID of the student: "); 
+									scanf("%d", &new_id); 
+								}
+								idCheck = idCheck->getNext(); 
+							}
+							old_id = tempStud->getID(); 
+							tempStud->setID(new_id); 
+							node = tempStud;
+							printf("\n%d was sucessfully updated to %d", old_id, new_id); 
+							break; 
+						case 2 : // updating first name 
+							printf("\nEnter the new first name: "); 
+							cin >> new_firstName;
+							old_firstName = tempStud->getFirstName();
+							tempStud->setFirstName(new_firstName); 
+							cout << "\n" << old_firstName << " was sucessfully updated to " << new_firstName;
+							node = tempStud;
+							break; 
+						case 3 : // updating last name 
+							printf("\nEnter the new last name: "); 
+							cin >> new_lastName;
+							old_lastName = tempStud->getLastName(); 
+							tempStud->setLastName(new_lastName);
+							cout << "\n" << old_lastName<< " was sucessfully updated to " << new_lastName; 
+							break; 
+						case 4 : // updating salary
+							printf("\nEnter the new Salary: "); 
+							scanf("%f", &new_salary); 
+							
+							old_salary = tempStud->getSalary(); 
+							tempStud->setSalary(new_salary); 
+							node = tempStud;
+							printf("\n%f was sucessfully updated to %f", old_salary, new_salary); 
+							break; 
+						
+						case 5 : // Exiting the program 
+							break; 
+						
+						default : 
+							printf("\nInvalid input\n");
+					}
+				}while(user_input != 5);
+				return;
+			}
+		}
+		node = node->getNext();
+	}
+	cout << "\nThere is no person associated with the given ID.";
+}
+
+void showMenu() // Displays the default menu.
+{
+	printf("\n---UNIVERSITY MENU---");
+	
+	printf("\n\n(1) List people");
+	printf("\n(2) Add someone");
+	printf("\n(3) Remove someone");
+	printf("\n(4) Update someone");
+	
+	printf("\n\n(5) Exit the program");
+	printf("\n\n----");
+	printf("\n\n");
+}
+
+void addMenuDisplay() // Displays the default menu.
+{
+	printf("\n---ADD MENU---");
+	
+	printf("\n\n(1) A Student");
+	printf("\n(2) A Professor");
+	printf("\n(3) An Employee");
+	
+	printf("\n\n(4) Exit the program");
+	printf("\n\n----");
+	printf("\n\n");
+}
+
+void showUpdateMenu(string first, string last) // Displays the menu for the specific student to have their attributes updated.
+{
+	printf("\n---UPDATE STUDENT MENU---");
+	cout << "\nWhat would you like to update about " << first << " " << last << "?";
+	printf("\n\n(1) Student ID");
+	printf("\n(2) Student First Name");
+	printf("\n(3) Student Last Name");
+	printf("\n(4) Student GPA");
+	
+	printf("\n\n(5) Exit the program");
+	printf("\n\n----");
+	printf("\n\n");
+}
+
+void updateProfessorMenu(string first, string last) // Displays the menu for the specific student to have their attributes updated.
+{
+	printf("\n---UPDATE PROFESSOR MENU---");
+	cout << "\nWhat would you like to update about " << first << " " << last << "?";
+	printf("\n\n(1) Professor ID");
+	printf("\n(2) Professor First Name");
+	printf("\n(3) Professor Last Name");
+	printf("\n(4) Professor Salary");
+	printf("\n(5) Professor Tenured");
+	printf("\n(6) Professor Department");
+	
+	printf("\n\n(7) Exit the program");
+	printf("\n\n----");
+	printf("\n\n");
+}
+
+void updateEmployeeMenu(string first, string last) // Displays the menu for the specific student to have their attributes updated.
+{
+	printf("\n---UPDATE EMPLOYEE MENU---");
+	cout << "\nWhat would you like to update about " << first << " " << last << "?";
+	printf("\n\n(1) Employee ID");
+	printf("\n(2) Employee First Name");
+	printf("\n(3) Employee Last Name");
+	printf("\n(4) Employee Salary");
+	
+	printf("\n\n(5) Exit the program");
+	printf("\n\n----");
+	printf("\n\n");
+}
